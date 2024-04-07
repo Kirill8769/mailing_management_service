@@ -34,4 +34,3 @@ class ClientDeleteView(DeleteView):
     model = Client
     extra_context = {'title': 'Удаление клиента'}
     success_url = reverse_lazy('client:client_list')
-

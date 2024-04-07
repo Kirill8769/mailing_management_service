@@ -1,0 +1,27 @@
+{% extends 'general/base.html' %}
+
+{% block content %}
+<div class="row">
+    {% for object in object_list %}
+    <div class="col-md-4">
+        <div class="card mb-4 box-shadow">
+            <div class="card-body">
+                <p class="card-text"><strong>Заголовок:</strong> {{ object.title }}</p>
+                <p class="card-text"><strong>Дата начала:</strong> {{ object.start_date }}</p>
+                <p class="card-text"><strong>Периодичность:</strong> {{ object.get_periodicity_display }}</p>
+                <p class="card-text"><strong>Статус:</strong> {{ object.get_mailing_status_display }}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                        <a href="{% url 'mailing:mailing_detail' object.pk %}" class="btn btn-sm btn-outline-secondary">Подробнее</a>
+                        <a href="{% url 'mailing:mailing_update' object.pk %}" class="btn btn-sm btn-outline-warning">Изменить</a>
+                        <a href="{% url 'mailing:mailing_delete' object.pk %}" class="btn btn-sm btn-outline-danger">Удалить</a>
+                    </div>
+                    <small class="text-muted">?</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+</div>
+{% endblock %}
