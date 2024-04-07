@@ -1,0 +1,14 @@
+{% extends 'general/base.html' %}
+
+{% block content %}
+<div class="row g-0">
+    <div class="col-md-8">
+        <div class="card-body">
+            <h5 class="card-title">{{ object.name }}</h5>
+            <p class="card-text"><strong>E-mail:</strong> {{ object.email }}</p>
+            <p class="card-text"><strong>Комментарий:</strong> {{ object.comment }}</p>
+            <a href="{% url 'client:client_list' %}" class="btn btn-success">Вернуться к списку</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
