@@ -28,7 +28,7 @@ class Mailing(models.Model):
     message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name='Сообщение')
 
     def __str__(self):
-        return f'{self.client}: {self.mailing_status}'
+        return f'{self.title}'
 
     class Meta:
         verbose_name = 'Рассылку'
@@ -38,7 +38,7 @@ class Mailing(models.Model):
 class Attempt(models.Model):
     STATUS_LIST = [
         ('Y', 'Успешно'),
-        ('N', 'Не успешно'),
+        ('N', 'Ошибка'),
     ]
     date_send = models.DateTimeField(auto_now_add=timezone.now, **NULLABLE, verbose_name='Дата отправки')
     attempt_status = models.CharField(max_length=1, choices=STATUS_LIST, verbose_name='Статус', **NULLABLE)

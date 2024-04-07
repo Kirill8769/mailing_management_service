@@ -1,7 +1,7 @@
 from django.urls import reverse, reverse_lazy
-from django.views.generic import DeleteView, DetailView, ListView, UpdateView, CreateView
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView, TemplateView
 
-from .models import Mailing
+from .models import Mailing, Attempt
 
 
 class MailingListView(ListView):
@@ -36,3 +36,12 @@ class MailingDeleteView(DeleteView):
     success_url = reverse_lazy('mailing:mailing_list')
 
 
+class StatisticView(TemplateView):
+    template_name = 'mailing/statistic.html'
+    extra_context = {'title': 'Статистика'}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['object_list'] = Attempt.objects.all()
+        print(context)
+        return context
