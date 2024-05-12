@@ -31,11 +31,11 @@ class Mailing(models.Model):
         return f'{self.title}'
 
     class Meta:
-        verbose_name = 'Рассылку'
+        verbose_name = 'Рассылка'
         verbose_name_plural = 'Рассылки'
 
 
-class Attempt(models.Model):
+class Log(models.Model):
     STATUS_LIST = [
         ('Y', 'Успешно'),
         ('N', 'Ошибка'),
@@ -50,5 +50,5 @@ class Attempt(models.Model):
         return f'{self.mailing}: {self.client} - {self.attempt_status}'
 
     class Meta:
-        verbose_name = 'Попытку'
-        verbose_name_plural = 'Попытки'
+        verbose_name = 'Лог'
+        verbose_name_plural = 'Логи'

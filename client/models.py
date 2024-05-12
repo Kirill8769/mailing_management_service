@@ -13,7 +13,7 @@ class Client(models.Model):
         return f'{self.name} ({self.email})'
 
     class Meta:
-        verbose_name = 'Клиента'
+        verbose_name = 'Клиент'
         verbose_name_plural = 'Клиенты'
 
 

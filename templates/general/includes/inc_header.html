@@ -1,0 +1,51 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">Mailer</a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Главная</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Рассылки</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Клиенты</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Письма</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Статистика</a>
+                </li>
+            </ul>
+            <div class="dropdown text-end">
+                <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle show"
+                   data-bs-toggle="dropdown" aria-expanded="true">
+                    {% if user.avatar %}
+                    <img src="#" alt="mdo" width="32" height="32" class="rounded-circle">
+                    {% else %}
+                    <img src="{% static 'icon_male.png' %}" alt="mdo" width="32" height="32" class="rounded-circle">
+                    {% endif %}
+                </a>
+                <ul class="dropdown-menu text-small" data-popper-placement="bottom-end"
+                    style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 34px);">
+                    {% if user.is_authenticated %}
+                    <li><a class="dropdown-item" href="{% url 'users:profile' user.pk %}">Профиль</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="{% url 'users:logout' %}">Выйти</a></li>
+                    {% else %}
+                    <li><a class="dropdown-item" href="{% url 'users:register' %}">Зарегистрироваться</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="{% url 'users:login' %}">Войти</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>

@@ -10,6 +10,9 @@ python = "^3.11"
 django = "^5.0.4"
 python-dotenv = "^1.0.1"
 psycopg2 = "^2.9.9"
+django-apscheduler = "^0.6.2"
+pillow = "^10.3.0"
+crispy-bootstrap5 = "^2024.2"
 
 
 [build-system]

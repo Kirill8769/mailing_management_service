@@ -1,7 +1,7 @@
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView, TemplateView
 
-from .models import Mailing, Attempt
+from .models import Mailing, Log
 
 
 class MailingListView(ListView):
@@ -42,6 +42,6 @@ class StatisticView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['object_list'] = Attempt.objects.all()
+        context['object_list'] = Log.objects.all()
         print(context)
         return context
