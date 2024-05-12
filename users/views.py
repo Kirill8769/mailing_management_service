@@ -34,6 +34,7 @@ class UserUpdateView(UpdateView):
     model = User
     form_class = UserProfileForm
     extra_context = {'title': 'Профиль'}
+    success_url = reverse_lazy('users:login')
 
 
 class UserForgotPasswordView(TemplateView):

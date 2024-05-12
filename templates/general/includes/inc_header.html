@@ -24,9 +24,9 @@
                 <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle show"
                    data-bs-toggle="dropdown" aria-expanded="true">
                     {% if user.avatar %}
-                    <img src="#" alt="mdo" width="32" height="32" class="rounded-circle">
+                    <img src="{{ user.avatar.url }}" alt="ava" width="32" height="32" class="rounded-circle">
                     {% else %}
-                    <img src="{% static 'icon_male.png' %}" alt="mdo" width="32" height="32" class="rounded-circle">
+                    <img src="{% static 'icon_male.png' %}" alt="ava" width="32" height="32" class="rounded-circle">
                     {% endif %}
                 </a>
                 <ul class="dropdown-menu text-small" data-popper-placement="bottom-end"
