@@ -8,16 +8,16 @@
                     <a class="nav-link" href="/">Главная</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Рассылки</a>
+                    <a class="nav-link" href="{% url 'mailing:mailing_list' %}">Рассылки</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Клиенты</a>
+                    <a class="nav-link" href="{% url 'client:client_list' %}">Клиенты</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Письма</a>
+                    <a class="nav-link" href="{% url 'message:message_list' %}">Письма</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Статистика</a>
+                    <a class="nav-link" href="{% url 'mailing:statistic' %}">Статистика</a>
                 </li>
             </ul>
             <div class="dropdown text-end">

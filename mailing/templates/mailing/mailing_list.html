@@ -1,6 +1,7 @@
 {% extends 'general/base.html' %}
 
 {% block content %}
+<a class="btn btn-success mb-3" type="submit" href="{% url 'mailing:mailing_create' %}">Создать рассылку</a>
 <div class="row">
     {% for object in object_list %}
     <div class="col-md-4">
