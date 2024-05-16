@@ -1,5 +1,19 @@
 {% extends 'general/base.html' %}
 
 {% block content %}
-Hello !
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    <main class="px-3">
+        <p class="lead">Количество созданных рассылок - {{ count_mailing }}</p>
+        <p class="lead">Количество созданных клиентов - {{ count_client }}</p>
+        <p class="lead">Количество созданных сообшений - {{ count_message }}</p>
+        <p class="lead">
+            {% if not user.is_authenticated %}
+            <a href="{% url 'users:login' %}" class="btn btn-success">Начать</a>
+            {% else %}
+            <a href="{% url 'mailing:mailing_create' %}" class="btn btn-success">Создать рассылку</a>
+            {% endif %}
+        </p>
+
+    </main>
+</div>
 {% endblock %}

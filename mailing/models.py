@@ -3,6 +3,7 @@ from django.utils import timezone
 
 from client.models import Client
 from message.models import Message
+from users.models import User
 
 NULLABLE = {'blank': True, 'null': True}
 
@@ -26,6 +27,7 @@ class Mailing(models.Model):
     mailing_status = models.CharField(max_length=1, choices=STATUS_LIST, verbose_name='Статус', **NULLABLE)
     client = models.ManyToManyField(Client, verbose_name='Клиент')
     message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name='Сообщение')
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Владелец', **NULLABLE)
 
     def __str__(self):
         return f'{self.title}'

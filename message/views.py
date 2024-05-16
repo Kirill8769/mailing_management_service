@@ -20,6 +20,10 @@ class MessageCreateView(CreateView):
     extra_context = {'title': 'Создание письма'}
     success_url = reverse_lazy('message:message_list')
 
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
+
 
 class MessageUpdateView(UpdateView):
     model = Message
