@@ -16,9 +16,11 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'message:message_list' %}">Письма</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'mailing:statistic' %}">Статистика</a>
-                </li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'mailing:statistic' %}">Статистика</a>
+                    </li>
+                {% endif %}
             </ul>
             <div class="dropdown text-end">
                 <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle show"

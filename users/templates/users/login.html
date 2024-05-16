@@ -14,6 +14,7 @@
                     <div class="card-body">
                         {{ form|crispy }}
                         <button type="submit" class="btn btn-success">Войти</button>
+                        <a href="{% url 'users:register' %}" class="btn btn-success">Зарегистрироваться</a>
                         <a href="{% url 'users:forgot-password' %}" class="btn btn-warning">Забыли пароль</a>
                     </div>
                 </div>

@@ -1,19 +1,30 @@
 {% extends 'general/base.html' %}
 
 {% block content %}
-<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-    <main class="px-3">
-        <p class="lead">Количество созданных рассылок - {{ count_mailing }}</p>
-        <p class="lead">Количество созданных клиентов - {{ count_client }}</p>
-        <p class="lead">Количество созданных сообшений - {{ count_message }}</p>
-        <p class="lead">
-            {% if not user.is_authenticated %}
-            <a href="{% url 'users:login' %}" class="btn btn-success">Начать</a>
-            {% else %}
-            <a href="{% url 'mailing:mailing_create' %}" class="btn btn-success">Создать рассылку</a>
-            {% endif %}
-        </p>
-
-    </main>
-</div>
+<main>
+    <div class="album py-5 bg-body-tertiary">
+        <div class="container">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                {% for title, count in dict_info.items %}
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <div class="card-header text-center">{{ title }}</div>
+                        <div class="card-body">
+                            <p class="card-text text-center">{{ count }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <p class="lead mt-5 text-center mx-auto w-50">
+                {% if not user.is_authenticated %}
+                <a href="{% url 'users:login' %}" class="btn btn-success btn-lg w-75">Начать</a>
+                {% else %}
+                <a href="{% url 'mailing:mailing_create' %}" class="btn btn-success btn-lg w-50">Создать
+                    рассылку</a>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+</main>
 {% endblock %}
