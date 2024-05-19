@@ -16,5 +16,18 @@
             54
         ]
     }
+},
+{
+    "model": "auth.group",
+    "pk": 2,
+    "fields": {
+        "name": "content_manager",
+        "permissions": [
+            55,
+            56,
+            57,
+            58
+        ]
+    }
 }
 ]

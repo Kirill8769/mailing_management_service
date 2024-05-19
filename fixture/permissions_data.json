@@ -484,5 +484,41 @@
         "content_type": 13,
         "codename": "can_check_active_users"
     }
+},
+{
+    "model": "auth.permission",
+    "pk": 55,
+    "fields": {
+        "name": "Can add blog",
+        "content_type": 14,
+        "codename": "add_blog"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 56,
+    "fields": {
+        "name": "Can change blog",
+        "content_type": 14,
+        "codename": "change_blog"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 57,
+    "fields": {
+        "name": "Can delete blog",
+        "content_type": 14,
+        "codename": "delete_blog"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 58,
+    "fields": {
+        "name": "Can view blog",
+        "content_type": 14,
+        "codename": "view_blog"
+    }
 }
 ]
