@@ -9,7 +9,7 @@ from .services import get_messages_from_cache
 
 class MessageListView(ListView):
     model = Message
-    extra_context = {'title': 'Все письма'}
+    extra_context = {'title': 'Письма'}
 
     def get_queryset(self):
         user = self.request.user

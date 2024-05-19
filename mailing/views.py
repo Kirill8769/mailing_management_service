@@ -10,7 +10,7 @@ from .models import Mailing, Log
 
 class MailingListView(ListView):
     model = Mailing
-    extra_context = {'title': 'Все рассылки'}
+    extra_context = {'title': 'Рассылки'}
 
     def get_queryset(self):
         user = self.request.user
