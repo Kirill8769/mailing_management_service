@@ -12,5 +12,9 @@ class Message(models.Model):
         return self.subject
 
     class Meta:
+        ordering = ('id',)
         verbose_name = 'Сообщение'
         verbose_name_plural = 'Сообщения'
+        permissions = [
+            ('can_view_messages', 'can view messages'),
+        ]

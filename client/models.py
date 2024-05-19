@@ -15,8 +15,9 @@ class Client(models.Model):
         return f'{self.name} ({self.email})'
 
     class Meta:
+        ordering = ('id',)
         verbose_name = 'Клиент'
         verbose_name_plural = 'Клиенты'
-
-
-
+        permissions = [
+            ('can_view_clients', 'can view clients'),
+        ]

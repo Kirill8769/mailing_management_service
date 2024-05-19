@@ -1,6 +1,10 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView, TemplateView
 
+from .forms import MailingForm
 from .models import Mailing, Log
 
 
@@ -8,15 +12,34 @@ class MailingListView(ListView):
     model = Mailing
     extra_context = {'title': 'Все рассылки'}
 
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_authenticated:
+            if user.is_superuser:
+                return Mailing.objects.all()
+            if user.has_perm('mailing.can_view_mailings'):
+                return Mailing.objects.all()
+            return Mailing.objects.filter(owner=user)
+        return Mailing.objects.none()
 
-class MailingDetailView(DetailView):
+
+class MailingDetailView(LoginRequiredMixin, DetailView):
     model = Mailing
     extra_context = {'title': 'Детали рассылки'}
 
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset=queryset)
+        user = self.request.user
+        if obj.owner == user or user.is_superuser:
+            return obj
+        if user.has_perm('mailing.view_mailing'):
+            return obj
+        raise PermissionDenied
 
-class MailingCreateView(CreateView):
+
+class MailingCreateView(LoginRequiredMixin, CreateView):
     model = Mailing
-    fields = ('title', 'start_date', 'periodicity', 'mailing_status', 'client', 'message',)
+    form_class = MailingForm
     extra_context = {'title': 'Создание рассылки'}
     success_url = reverse_lazy('mailing:mailing_list')
 
@@ -25,27 +48,60 @@ class MailingCreateView(CreateView):
         return super().form_valid(form)
 
 
-class MailingUpdateView(UpdateView):
+class MailingUpdateView(LoginRequiredMixin, UpdateView):
     model = Mailing
-    fields = ('title', 'start_date', 'periodicity', 'mailing_status', 'client', 'message',)
+    form_class = MailingForm
     extra_context = {'title': 'Обновление рассылки'}
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset=queryset)
+        user = self.request.user
+        if obj.owner == user or user.is_superuser:
+            return obj
+        raise PermissionDenied
 
     def get_success_url(self):
         return reverse('mailing:mailing_detail', args=[self.object.pk])
 
 
-class MailingDeleteView(DeleteView):
+class MailingDeleteView(LoginRequiredMixin, DeleteView):
     model = Mailing
     extra_context = {'title': 'Удаление рассылки'}
     success_url = reverse_lazy('mailing:mailing_list')
 
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset=queryset)
+        user = self.request.user
+        if obj.owner == user or user.is_superuser:
+            return obj
+        raise PermissionDenied
 
-class StatisticView(TemplateView):
+
+class StatisticView(LoginRequiredMixin, TemplateView):
     template_name = 'mailing/statistic.html'
     extra_context = {'title': 'Статистика'}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['object_list'] = Log.objects.all()
-        print(context)
         return context
+
+    # def get_queryset(self):
+    #     user = self.request.user
+    #     if user.is_authenticated:
+    #         if user.is_superuser:
+    #             return Log.objects.all()
+    #         if user.groups.filter(name='moderator').exists():
+    #             return Log.objects.all()
+    #         return Log.objects.filter(owner=user)
+    #     return Log.objects.none()
+
+
+def check_mailing_status(request, pk):
+    mailing = get_object_or_404(Mailing, pk=pk)
+    if mailing.mailing_status == 'R':
+        mailing.mailing_status = 'S'
+    else:
+        mailing.mailing_status = 'R'
+    mailing.save()
+    return redirect('mailing:mailing_list')

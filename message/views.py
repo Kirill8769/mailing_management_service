@@ -1,3 +1,5 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.urls import reverse, reverse_lazy
 from django.views.generic import DeleteView, DetailView, ListView, UpdateView, CreateView
 
@@ -8,13 +10,32 @@ class MessageListView(ListView):
     model = Message
     extra_context = {'title': 'Все письма'}
 
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_authenticated:
+            if user.is_superuser:
+                return Message.objects.all()
+            if user.has_perm('message.can_view_messages'):
+                return Message.objects.all()
+            return Message.objects.filter(owner=user)
+        return Message.objects.none()
 
-class MessageDetailView(DetailView):
+
+class MessageDetailView(LoginRequiredMixin, DetailView):
     model = Message
     extra_context = {'title': 'Детали письма'}
 
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset=queryset)
+        user = self.request.user
+        if obj.owner == user or user.is_superuser:
+            return obj
+        if user.has_perm('message.view_message'):
+            return obj
+        raise PermissionDenied
 
-class MessageCreateView(CreateView):
+
+class MessageCreateView(LoginRequiredMixin, CreateView):
     model = Message
     fields = ('subject', 'body', )
     extra_context = {'title': 'Создание письма'}
@@ -25,16 +46,28 @@ class MessageCreateView(CreateView):
         return super().form_valid(form)
 
 
-class MessageUpdateView(UpdateView):
+class MessageUpdateView(LoginRequiredMixin, UpdateView):
     model = Message
     fields = ('subject', 'body', )
     extra_context = {'title': 'Обновление письма'}
+    success_url = reverse_lazy('message:message_list')
 
-    def get_success_url(self):
-        return reverse('message:message_detail', args=[self.object.pk])
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset=queryset)
+        user = self.request.user
+        if obj.owner == user or user.is_superuser:
+            return obj
+        raise PermissionDenied
 
 
-class MessageDeleteView(DeleteView):
+class MessageDeleteView(LoginRequiredMixin, DeleteView):
     model = Message
     extra_context = {'title': 'Удаление письма'}
     success_url = reverse_lazy('message:message_list')
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset=queryset)
+        user = self.request.user
+        if obj.owner == user or user.is_superuser:
+            return obj
+        raise PermissionDenied

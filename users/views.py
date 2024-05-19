@@ -2,7 +2,7 @@ import secrets
 
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.mail import send_mail
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404, reverse
 from django.views.generic import CreateView, UpdateView, TemplateView
 from django.urls import reverse_lazy
 
@@ -27,6 +27,18 @@ class UserCreateView(CreateView):
     extra_context = {'title': 'Регистрация'}
 
     def form_valid(self, form):
+        user = form.save()
+        user.is_active = False
+        user.token = secrets.token_hex(16)
+        user.save()
+        host = self.request.get_host()
+        url = f'http://{host}/users/email-confirm/{user.token}/'
+        send_mail(
+            subject='Подтверждение почты',
+            message=f'Для подтверждения почты перейдите по ссылке\n{url}',
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[user.email]
+        )
         return super().form_valid(form)
 
 
@@ -34,7 +46,7 @@ class UserUpdateView(UpdateView):
     model = User
     form_class = UserProfileForm
     extra_context = {'title': 'Профиль'}
-    success_url = reverse_lazy('users:login')
+    success_url = reverse_lazy('main:index')
 
 
 class UserForgotPasswordView(TemplateView):
@@ -73,3 +85,11 @@ class UserForgotPasswordView(TemplateView):
             from_email=settings.EMAIL_HOST_USER,
             recipient_list=[to_email]
         )
+
+
+def email_verification(request, token):
+    user = get_object_or_404(User, token=token)
+    if user:
+        user.is_active = True
+        user.save()
+    return redirect(reverse('users:login'))
