@@ -520,5 +520,14 @@
         "content_type": 14,
         "codename": "view_blog"
     }
+},
+{
+    "model": "auth.permission",
+    "pk": 59,
+    "fields": {
+        "name": "can view users",
+        "content_type": 13,
+        "codename": "can_view_users"
+    }
 }
 ]
