@@ -2,6 +2,8 @@ from django import forms
 from django.core.exceptions import ValidationError
 
 from .models import Mailing
+from client.models import Client
+from message.models import Message
 
 
 class MailingForm(forms.ModelForm):
@@ -13,6 +15,13 @@ class MailingForm(forms.ModelForm):
             'start_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}, format='%Y-%m-%dT%H:%M'),
             'end_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}, format='%Y-%m-%dT%H:%M'),
         }
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request')
+        user = self.request.user
+        super().__init__(*args, **kwargs)
+        self.fields['client'].queryset = Client.objects.filter(owner=user)
+        self.fields['message'].queryset = Message.objects.filter(owner=user)
 
     def clean_date(self):
         cleaned_data = super().clean()

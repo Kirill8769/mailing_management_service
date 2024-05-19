@@ -18,6 +18,7 @@
                 <p><strong>Статус:</strong> {{ object.get_mailing_status_display }}</p>
                     <div class="d-flex justify-content-between align-items-center">
                     <div class="btn-group">
+                        {% if perms.mailing.can_check_status_mailings or user == object.owner %}
                         <form method="post" action="{% url 'mailing:check_status' object.pk %}">
                             {% csrf_token %}
                             {% if object.mailing_status == 'R' %}
@@ -26,15 +27,22 @@
                             <button type="submit" class="btn btn-sm btn-outline-success">Запустить</button>
                             {% endif %}
                         </form>
-                        <a href="{% url 'mailing:mailing_detail' object.pk %}" class="btn btn-sm btn-outline-secondary">Подробнее</a>
-                        <a href="{% url 'mailing:mailing_update' object.pk %}" class="btn btn-sm btn-outline-warning">Изменить</a>
-                        <a href="{% url 'mailing:mailing_delete' object.pk %}" class="btn btn-sm btn-outline-danger">Удалить</a>
+                        {% endif %}
+                        {% if perms.mailing.view_mailing or user == object.owner %}
+                            <a href="{% url 'mailing:mailing_detail' object.pk %}" class="btn btn-sm btn-outline-secondary">Подробнее</a>
+                        {% endif %}
+                        {% if perms.mailing.change_mailing or user == object.owner %}
+                            <a href="{% url 'mailing:mailing_update' object.pk %}" class="btn btn-sm btn-outline-warning">Изменить</a>
+                        {% endif %}
+                        {% if perms.mailing.delete_mailing or user == object.owner %}
+                            <a href="{% url 'mailing:mailing_delete' object.pk %}" class="btn btn-sm btn-outline-danger">Удалить</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    {% endfor %}
 
-</div>
+    {% endfor %}
+    </div>
 {% endblock %}

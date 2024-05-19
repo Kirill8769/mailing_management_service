@@ -1,5 +1,4 @@
 import logging
-from smtplib import SMTPRecipientsRefused
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -23,12 +22,18 @@ def change_status():
         for mailing in mailings:
             if mailing.end_date < timezone.now():
                 mailing.mailing_status = 'E'
-                if Log.objects.filter(mailing=mailing).exists():
-                    scheduler.remove_job(mailing.pk)
+                if scheduler.get_job(str(mailing.pk)):
+                    scheduler.remove_job(str(mailing.pk))
+                    logger.info(f"Рассылка {mailing.title} завершена")
             elif mailing.mailing_status == 'S':
-                pass
+                if scheduler.get_job(str(mailing.pk)):
+                    scheduler.remove_job(str(mailing.pk))
+                    logger.info(f"Рассылка {mailing.title} остановлена")
             elif mailing.start_date <= timezone.now() <= mailing.end_date:
-                mailing.mailing_status = 'R'
+                if not mailing.owner.is_active:
+                    mailing.mailing_status = 'S'
+                else:
+                    mailing.mailing_status = 'R'
             mailing.save()
 
 
@@ -36,12 +41,8 @@ def start_or_not_mailing():
     mailings_correct = Mailing.objects.filter(mailing_status='R')
     if mailings_correct:
         for mailing in mailings_correct:
-            print(11, mailing)
-            logs = Log.objects.filter(mailing=mailing)
-            print('logs', logs.exists())
-            if not logs.exists():
-                print('add')
-                add_job(mailing)
+            # Добавить проверку на необходимость добавления задания по дате отправки и периоду
+            add_job(mailing)
 
 
 def send_mailings(mailing):
@@ -49,11 +50,9 @@ def send_mailings(mailing):
     message = mailing.message.body
     from_email = settings.DEFAULT_FROM_EMAIL
     clients = mailing.client.all()
-    print(clients)
     if clients:
         for client in clients:
             try:
-                print(client.email)
                 send_status = send_mail(title, message, from_email, (client.email, ))
                 if send_status:
                     Log.objects.create(
@@ -61,7 +60,7 @@ def send_mailings(mailing):
                         answer_server='Успешно',
                         client=client,
                         mailing=mailing,
-                        owner=mailing.pk,
+                        owner=mailing.owner,
                     )
                 else:
                     Log.objects.create(
@@ -69,7 +68,7 @@ def send_mailings(mailing):
                         answer_server='Ошибка',
                         client=client,
                         mailing=mailing,
-                        owner=mailing.pk,
+                        owner=mailing.owner,
                     )
             except Exception as ex:
                 Log.objects.create(
@@ -77,12 +76,11 @@ def send_mailings(mailing):
                     answer_server=f'{ex}',
                     client=client,
                     mailing=mailing,
-                    owner=mailing.pk,
+                    owner=mailing.owner,
                 )
 
 
 def add_job(mailing):
-    print('job')
     if mailing.periodicity == 'D':
         # cron_period = CronTrigger(day='*/1')
         cron_period = CronTrigger(second='*/30')
@@ -111,7 +109,7 @@ class Command(BaseCommand):
 
         scheduler.add_job(
             change_status,
-            trigger=CronTrigger(second='*/10'),
+            trigger=CronTrigger(second='*/30'),
             id='change_status',
             max_instances=1,
             replace_existing=True,
@@ -120,7 +118,7 @@ class Command(BaseCommand):
 
         scheduler.add_job(
             start_or_not_mailing,
-            trigger=CronTrigger(second='*/10'),
+            trigger=CronTrigger(second='*/30'),
             id='start_or_not_mailing',
             max_instances=1,
             replace_existing=True,

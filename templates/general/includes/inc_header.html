@@ -21,6 +21,11 @@
                         <a class="nav-link" href="{% url 'mailing:statistic' %}">Статистика</a>
                     </li>
                 {% endif %}
+                {% if is_moderator or is_superuser %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'users:users-list' %}">Пользователи сервиса</a>
+                    </li>
+                {% endif %}
             </ul>
             <div class="dropdown text-end">
                 <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle show"

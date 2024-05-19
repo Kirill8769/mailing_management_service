@@ -18,9 +18,15 @@
                 <p class="card-text"><strong>Комментарий:</strong> {{ object.comment }}</p>
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="btn-group">
-                        <a href="{% url 'client:client_detail' object.pk %}" class="btn btn-sm btn-outline-secondary">Подробнее</a>
-                        <a href="{% url 'client:client_update' object.pk %}" class="btn btn-sm btn-outline-warning">Изменить</a>
-                        <a href="{% url 'client:client_delete' object.pk %}" class="btn btn-sm btn-outline-danger">Удалить</a>
+                        {% if perms.client.view_client or user == object.owner %}
+                            <a href="{% url 'client:client_detail' object.pk %}" class="btn btn-sm btn-outline-secondary">Подробнее</a>
+                        {% endif %}
+                        {% if perms.client.change_client or user == object.owner %}
+                            <a href="{% url 'client:client_update' object.pk %}" class="btn btn-sm btn-outline-warning">Изменить</a>
+                        {% endif %}
+                        {% if perms.client.delete_client or user == object.owner %}
+                            <a href="{% url 'client:client_delete' object.pk %}" class="btn btn-sm btn-outline-danger">Удалить</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
