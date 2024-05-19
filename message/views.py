@@ -1,9 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.views.generic import DeleteView, DetailView, ListView, UpdateView, CreateView
 
 from .models import Message
+from .services import get_messages_from_cache
 
 
 class MessageListView(ListView):
@@ -14,10 +15,10 @@ class MessageListView(ListView):
         user = self.request.user
         if user.is_authenticated:
             if user.is_superuser:
-                return Message.objects.all()
+                return get_messages_from_cache()
             if user.has_perm('message.can_view_messages'):
-                return Message.objects.all()
-            return Message.objects.filter(owner=user)
+                return get_messages_from_cache()
+            return get_messages_from_cache().filter(owner=user)
         return Message.objects.none()
 
 
