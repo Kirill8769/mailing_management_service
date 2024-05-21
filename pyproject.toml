@@ -16,6 +16,9 @@ django = "4.2.2"
 redis = "^5.0.4"
 
 
+[tool.poetry.group.lint.dependencies]
+flake8 = "^7.0.0"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

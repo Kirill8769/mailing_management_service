@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils import timezone
 
 from client.models import Client
 from message.models import Message
@@ -23,8 +22,12 @@ class Mailing(models.Model):
     title = models.CharField(max_length=150, verbose_name='Заголовок')
     start_date = models.DateTimeField(verbose_name='Дата начала')
     end_date = models.DateTimeField(verbose_name='Дата окончания', **NULLABLE)
-    periodicity = models.CharField(max_length=1, choices=PERIOD_LIST, default='D', verbose_name='Периодичность', **NULLABLE)
-    mailing_status = models.CharField(max_length=1, choices=STATUS_LIST, default='C', verbose_name='Статус', **NULLABLE)
+    periodicity = models.CharField(
+        max_length=1, choices=PERIOD_LIST, default='D', verbose_name='Периодичность', **NULLABLE
+    )
+    mailing_status = models.CharField(
+        max_length=1, choices=STATUS_LIST, default='C', verbose_name='Статус', **NULLABLE
+    )
     client = models.ManyToManyField(Client, verbose_name='Клиенты')
     message = models.ForeignKey(Message, on_delete=models.SET_NULL, verbose_name='Сообщение', **NULLABLE)
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Владелец', **NULLABLE)

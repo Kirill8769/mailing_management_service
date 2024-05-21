@@ -3,8 +3,6 @@ from django.views.generic import TemplateView
 from blog.models import Blog
 from client.models import Client
 from mailing.models import Mailing
-from message.models import Message
-
 
 from django.db.models import Count
 
