@@ -7,6 +7,7 @@ from message.models import Message
 
 
 class MailingForm(forms.ModelForm):
+    """ Форма для создания и изменения рассылки """
 
     class Meta:
         model = Mailing
@@ -17,6 +18,10 @@ class MailingForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        """
+        При инициации формы, получаем информацию о пользователе и фильтруем кверисеты, что бы отображались
+        только клиенты и сообщения принадлежащие текущему пользователю.
+        """
         self.request = kwargs.pop('request')
         user = self.request.user
         super().__init__(*args, **kwargs)
@@ -24,6 +29,8 @@ class MailingForm(forms.ModelForm):
         self.fields['message'].queryset = Message.objects.filter(owner=user)
 
     def clean_date(self):
+        """ Метод проверяет что бы дата окончания рассылки не была меньше даты начала """
+
         cleaned_data = super().clean()
         start_date = cleaned_data.get('start_date')
         end_date = cleaned_data.get('end_date')

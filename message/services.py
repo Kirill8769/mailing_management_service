@@ -6,6 +6,7 @@ from .models import Message
 
 def get_messages_from_cache():
     """ Получает данные из кэша, если кэш пуст, получает данные из БД """
+
     if not settings.CACHE_ENABLED:
         return Message.objects.all()
     key = 'object_list'

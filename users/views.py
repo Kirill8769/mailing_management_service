@@ -17,10 +17,14 @@ from message.models import Message
 
 
 class UserListView(LoginRequiredMixin, ListView):
+    """ Контроллер списка пользователей """
+
     model = User
     extra_context = {'title': 'Пользователи сервиса'}
 
     def get_context_data(self, **kwargs):
+        """ Метод заполняет информационные данные о пользователях """
+
         context = super().get_context_data(**kwargs)
 
         user = self.request.user
@@ -43,6 +47,8 @@ class UserListView(LoginRequiredMixin, ListView):
         return context
 
     def get_queryset(self):
+        """ Метод возвращает список пользователей согласно правам доступа. """
+
         user = self.request.user
         if user.is_authenticated:
             if user.is_superuser:
@@ -53,21 +59,31 @@ class UserListView(LoginRequiredMixin, ListView):
 
 
 class UserLoginView(LoginView):
+    """ Контроллера входа в личный кабинет """
+
     template_name = 'users/login.html'
     extra_context = {'title': 'Вход'}
 
 
 class UserLogoutView(LogoutView):
+    """ Контроллера выхода из личного кабинета """
     pass
 
 
 class UserCreateView(CreateView):
+    """ Контроллер формы регистрации """
+
     model = User
     form_class = UserRegisterForm
     success_url = reverse_lazy('users:login')
     extra_context = {'title': 'Регистрация'}
 
     def form_valid(self, form):
+        """
+        Проверяет валидность заполненной формы, генерирует и записывает токен данные пользователя и
+        отправляет письмо со ссылкой для верификации на указанную почту.
+        """
+
         user = form.save()
         user.is_active = False
         user.token = secrets.token_hex(16)
@@ -84,6 +100,8 @@ class UserCreateView(CreateView):
 
 
 class UserUpdateView(UpdateView):
+    """ Контроллер формы редактирования профиля пользователя """
+
     model = User
     form_class = UserProfileForm
     extra_context = {'title': 'Профиль'}
@@ -91,22 +109,30 @@ class UserUpdateView(UpdateView):
 
 
 class UserForgotPasswordView(TemplateView):
+    """ Контроллер формы восстановления пароля пользователя """
+
     template_name = 'users/password_form.html'
     success_url = reverse_lazy('mailing:mailing_list')
     extra_context = {'title': 'Забыли пароль'}
 
     def get_context_data(self, **kwargs):
+        """ Метод передаёт в шаблон форму для восстановления пароля. """
+
         context = super().get_context_data(**kwargs)
         context['form'] = UserForgotPasswordForm()
         return context
 
     def post(self, request, *args, **kwargs):
+        """ Проверяет валидность заполненной формы. """
+
         form = UserForgotPasswordForm(request.POST)
         if form.is_valid():
             return self.form_valid(form)
         return self.form_invalid(form)
 
     def form_valid(self, form):
+        """ Генерирует и записывает новый пароль, и отправляет его пользователю на указанную почту. """
+
         user_email = form.cleaned_data['email']
         check_user = User.objects.get(email=user_email)
         new_password = secrets.token_hex(8)
@@ -116,10 +142,14 @@ class UserForgotPasswordView(TemplateView):
         return redirect('users:login')
 
     def form_invalid(self, form):
+        """ Обрабатывает некорректное заполнение формы """
+
         return self.render_to_response({'form': form, 'title': self.extra_context['title']})
 
     @staticmethod
     def send_new_password(to_email, password):
+        """ Метод для отправки писем при восстановлении пароля """
+
         send_mail(
             subject='Восстановление пароля',
             message=f'Новый пароль: {password}',
@@ -129,6 +159,8 @@ class UserForgotPasswordView(TemplateView):
 
 
 def email_verification(request, token):
+    """ Активация пользователя при успешной верификации """
+
     user = get_object_or_404(User, token=token)
     if user:
         user.is_active = True
@@ -137,6 +169,8 @@ def email_verification(request, token):
 
 
 def change_status(request, pk):
+    """ Смена статуса активности пользователя """
+
     user = User.objects.get(pk=pk)
     if user.is_active:
         user.is_active = False

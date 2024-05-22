@@ -5,12 +5,15 @@ from .models import Client
 
 
 class ClientForm(forms.ModelForm):
+    """ Форма для создания и изменения клиента """
 
     class Meta:
         model = Client
         fields = ('name', 'email', 'comment',)
 
     def clean_email(self):
+        """ Метод проверяет уникальность почты клиента для текущего пользователя """
+
         clean_data = super().clean()
         email = clean_data.get('email')
         user = self.initial.get('user').pk

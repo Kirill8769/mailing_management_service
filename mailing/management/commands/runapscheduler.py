@@ -17,6 +17,8 @@ scheduler = BlockingScheduler(timezone=settings.TIME_ZONE)
 
 
 def change_status():
+    """ Функция, в зависимости от состояния рассылки, меняет её статус """
+
     mailings = Mailing.objects.all()
     if mailings:
         for mailing in mailings:
@@ -38,6 +40,8 @@ def change_status():
 
 
 def start_or_not_mailing():
+    """ Функция создаёт джобы для рассылок со статусом - Запущена, согласно выбранному периоду. """
+
     mailings_correct = Mailing.objects.filter(mailing_status='R')
     if mailings_correct:
         for mailing in mailings_correct:
@@ -46,6 +50,12 @@ def start_or_not_mailing():
 
 
 def send_mailings(mailing):
+    """
+    Функция получает рассылку и отправляет полученное из рассылки сообщени, клиентам перечисленным в рассылке.
+    После попытки отправки, создаёт запись в модели Log о статусе отправки.
+
+    :param mailing: Рассылка.
+    """
     title = mailing.message.subject
     message = mailing.message.body
     from_email = settings.DEFAULT_FROM_EMAIL
@@ -81,6 +91,11 @@ def send_mailings(mailing):
 
 
 def add_job(mailing):
+    """
+    Создаёт джоб согласно полученному из переданной рассылки периоду
+
+    :param mailing: Рассылка.
+    """
     if mailing.periodicity == 'D':
         # cron_period = CronTrigger(day='*/1')
         cron_period = CronTrigger(second='*/30')
@@ -104,6 +119,9 @@ class Command(BaseCommand):
     help = "Runs APSscheduler"
 
     def handle(self, *args, **options):
+        """
+        Команда создаёт планировщик задач и заносит в него джобы на проверку статуса рассылки и на рассылку писем.
+        """
 
         scheduler.add_jobstore(DjangoJobStore(), 'default')
 

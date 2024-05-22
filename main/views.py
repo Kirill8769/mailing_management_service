@@ -8,9 +8,13 @@ from django.db.models import Count
 
 
 class IndexView(TemplateView):
+    """ Контроллер главной страницы """
+
     template_name = 'main/index.html'
 
     def get_context_data(self, **kwargs):
+        """ Собирает данные для отображения из на главной странице """
+
         context = super().get_context_data(**kwargs)
         context['title'] = 'Сервис рассылки писем'
         context['dict_info'] = {

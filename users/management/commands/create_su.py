@@ -4,8 +4,11 @@ from users.models import User
 
 
 class Command(BaseCommand):
+    """ Команда для создания суперпользователя """
 
     def handle(self, *args, **options):
+        """ Метод обработки команды """
+
         user = User.objects.create(email='admin')
         user.set_password('12345')
         user.is_active = True
