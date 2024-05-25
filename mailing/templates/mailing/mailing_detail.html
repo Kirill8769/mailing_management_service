@@ -1,0 +1,30 @@
+{% extends 'general/base.html' %}
+
+{% block content %}
+<div class="row g-0">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">{{ object.title }}</h5>
+                </div>
+                <div class="card-body">
+
+                    <p><strong>Дата начала:</strong> {{ object.start_date }}</p>
+                    <p><strong>Дата окончания:</strong> {% if object.end_date %}{{ object.end_date }}{% else%}Не указана{% endif %}</p>
+                    <p><strong>Периодичность:</strong> {{ object.get_periodicity_display }}</p>
+                    <p><strong>Статус:</strong> {{ object.get_mailing_status_display }}</p>
+                    <p><strong>Клиенты:</strong></p>
+                    {% for client in object.client.all %}
+                    <ul>
+                        <li><a href="{% url 'client:client_detail' client.pk %}">{{ client.email }}</a> ({{ client.name }})</li>
+                    </ul>
+                    {% endfor %}
+                    <p><strong>Сообщение:</strong> {{ object.message }}</p>
+                    <p><strong>Владелец:</strong> {{ object.owner }}</p>
+                    <a href="{% url 'mailing:mailing_list' %}" class="btn btn-success">Вернуться к списку</a>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

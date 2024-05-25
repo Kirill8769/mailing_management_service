@@ -1,0 +1,25 @@
+{% extends 'general/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="col-12">
+        <div class="row">
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        {{ title }}
+                    </div>
+                    <div class="card-body">
+                        {{ form|crispy }}
+                        <button type="submit" class="btn btn-success">Войти</button>
+                        <a href="{% url 'users:register' %}" class="btn btn-success">Зарегистрироваться</a>
+                        <a href="{% url 'users:forgot-password' %}" class="btn btn-warning">Забыли пароль</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
