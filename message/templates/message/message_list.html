@@ -1,0 +1,37 @@
+{% extends 'general/base.html' %}
+
+{% block content %}
+{% if user.is_authenticated %}
+    <a class="btn btn-success mb-3" type="submit" href="{% url 'message:message_create' %}">Создать письмо</a>
+{% else %}
+    <a class="btn btn-success mb-3" type="submit" href="{% url 'users:login' %}">Создать письмо</a>
+{% endif %}
+<div class="row">
+    {% for object in object_list %}
+    <div class="col-md-4">
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                <h5 class="card-title">{{ object.subject }}</h5>
+                </div>
+            <div class="card-body">
+                <p class="card-text">{{ object.body }}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                        {% if perms.message.view_message or user == object.owner %}
+                            <a href="{% url 'message:message_detail' object.pk %}" class="btn btn-sm btn-outline-secondary">Подробнее</a>
+                        {% endif %}
+                        {% if perms.message.change_message or user == object.owner %}
+                            <a href="{% url 'message:message_update' object.pk %}" class="btn btn-sm btn-outline-warning">Изменить</a>
+                        {% endif %}
+                        {% if perms.message.change_message or user == object.owner %}
+                            <a href="{% url 'message:message_delete' object.pk %}" class="btn btn-sm btn-outline-danger">Удалить</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+</div>
+{% endblock %}

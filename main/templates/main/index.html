@@ -1,0 +1,40 @@
+{% extends 'general/base.html' %}
+
+{% block content %}
+<main>
+    <div class="album py-5 bg-body-tertiary">
+        <div class="container">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                {% for title, count in dict_info.items %}
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <div class="card-header text-center">{{ title }}</div>
+                        <div class="card-body">
+                            <p class="card-text text-center">{{ count }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% for blog in blogs %}
+                <div class="col">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header text-center">{{ blog.title }}</div>
+                        <div class="card-body">
+                            <p class="card-text text-center">{{ blog.content }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <p class="lead mt-5 text-center mx-auto w-50">
+                {% if not user.is_authenticated %}
+                <a href="{% url 'users:login' %}" class="btn btn-success btn-lg w-75">Начать</a>
+                {% else %}
+                <a href="{% url 'mailing:mailing_create' %}" class="btn btn-success btn-lg w-50">Создать
+                    рассылку</a>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'general/base.html' %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<a class="btn btn-success mb-3" type="submit" href="{% url 'mailing:mailing_create' %}">Создать рассылку</a>
+{% else %}
+<a class="btn btn-success mb-3" type="submit" href="{% url 'users:login' %}">Создать рассылку</a>
+{% endif %}
+<div class="row">
+    {% for object in object_list %}
+    <div class="col-md-4">
+        <div class="card mb-4 box-shadow">
+            <div class="card-header"><h5>{{ object.title }}</h5></div>
+            <div class="card-body">
+                <p><strong>Дата начала:</strong> {{ object.start_date }}</p>
+                <p><strong>Дата окончания:</strong> {% if object.end_date %}{{ object.end_date }}{% else%}Не указана{% endif %}</p>
+                <p><strong>Периодичность:</strong> {{ object.get_periodicity_display }}</p>
+                <p><strong>Статус:</strong> {{ object.get_mailing_status_display }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                        {% if perms.mailing.can_check_status_mailings or user == object.owner %}
+                        <form method="post" action="{% url 'mailing:check_status' object.pk %}">
+                            {% csrf_token %}
+                            {% if object.mailing_status == 'R' %}
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Остановить</button>
+                            {% else %}
+                            <button type="submit" class="btn btn-sm btn-outline-success">Запустить</button>
+                            {% endif %}
+                        </form>
+                        {% endif %}
+                        {% if perms.mailing.view_mailing or user == object.owner %}
+                            <a href="{% url 'mailing:mailing_detail' object.pk %}" class="btn btn-sm btn-outline-secondary">Подробнее</a>
+                        {% endif %}
+                        {% if perms.mailing.change_mailing or user == object.owner %}
+                            <a href="{% url 'mailing:mailing_update' object.pk %}" class="btn btn-sm btn-outline-warning">Изменить</a>
+                        {% endif %}
+                        {% if perms.mailing.delete_mailing or user == object.owner %}
+                            <a href="{% url 'mailing:mailing_delete' object.pk %}" class="btn btn-sm btn-outline-danger">Удалить</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endfor %}
+    </div>
+{% endblock %}
